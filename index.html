@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>กระดานความคิดเห็น</title>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0f172a;--surface:#1e293b;--card:#334155;
+  --accent:#6366f1;--accent2:#8b5cf6;--success:#22c55e;
+  --danger:#ef4444;--warn:#f59e0b;--text:#f1f5f9;
+  --muted:#94a3b8;--border:#475569;--r:12px;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Prompt',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+header{background:linear-gradient(135deg,var(--accent),var(--accent2));padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20;box-shadow:0 2px 24px rgba(99,102,241,0.35);}
+header h1{font-size:1.1rem;font-weight:700;}
+.hbadge{background:rgba(255,255,255,0.18);padding:3px 10px;border-radius:20px;font-size:0.72rem;font-weight:600;}
+.wrap{flex:1;padding:16px;max-width:900px;margin:0 auto;width:100%;}
+.sbar{background:var(--card);border-radius:8px;padding:7px 14px;display:flex;align-items:center;gap:8px;font-size:0.78rem;color:var(--muted);margin-bottom:14px;}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--success);display:inline-block;animation:pulse 1.5s infinite;}
+.dot.red{background:var(--danger);animation:none;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(.7);}}
+.stats{display:flex;gap:10px;margin-bottom:14px;}
+.stat{background:var(--card);border-radius:8px;padding:10px 14px;flex:1;text-align:center;}
+.stat-n{font-size:1.5rem;font-weight:700;color:var(--accent);line-height:1;}
+.stat-l{font-size:0.68rem;color:var(--muted);margin-top:2px;}
+.q-box{background:linear-gradient(135deg,#1e1b4b,#2e1065);border:2px solid var(--accent);border-radius:var(--r);padding:22px;margin-bottom:14px;min-height:88px;display:flex;align-items:center;justify-content:center;text-align:center;}
+.q-text{font-size:1.2rem;font-weight:600;line-height:1.5;color:#e2e8f0;}
+.q-empty{color:var(--muted);font-style:italic;}
+.t-panel{background:#1a0a2e;border:1.5px solid var(--accent2);border-radius:var(--r);padding:16px;margin-bottom:14px;}
+.t-label{font-size:0.68rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent2);font-weight:700;margin-bottom:10px;}
+.t-input-row{display:flex;gap:8px;}
+input[type=text]{flex:1;background:var(--card);border:1.5px solid var(--border);border-radius:8px;color:var(--text);padding:10px 12px;font-size:0.95rem;outline:none;font-family:'Prompt',sans-serif;transition:border-color .2s;}
+input[type=text]:focus{border-color:var(--accent2);}
+input[type=text]::placeholder{color:var(--muted);}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+.btn{padding:9px 16px;border-radius:8px;border:none;font-weight:600;cursor:pointer;font-size:0.88rem;font-family:'Prompt',sans-serif;transition:all .15s;display:inline-flex;align-items:center;gap:5px;}
+.btn:active{transform:scale(.97);}
+.btn:disabled{opacity:.5;cursor:not-allowed;}
+.bp{background:var(--accent);color:#fff;}.bp:hover{background:#4f46e5;}
+.bs{background:var(--success);color:#fff;}.bs:hover{background:#16a34a;}
+.bd{background:var(--danger);color:#fff;}.bd:hover{background:#dc2626;}
+.bg{background:transparent;color:var(--muted);border:1.5px solid var(--border);}.bg:hover{border-color:var(--accent);color:var(--text);}
+.bt{background:#0d9488;color:#fff;}.bt:hover{background:#0f766e;}
+.a-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:14px;}
+.name-pill{display:inline-block;background:var(--accent);color:#fff;padding:3px 12px;border-radius:20px;font-size:0.78rem;font-weight:600;margin-bottom:8px;}
+textarea{width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:8px;color:var(--text);padding:11px;font-size:0.95rem;min-height:85px;resize:vertical;outline:none;font-family:'Prompt',sans-serif;transition:border-color .2s;}
+textarea:focus{border-color:var(--accent);}
+textarea::placeholder{color:var(--muted);}
+.lock-box{background:#052e16;border:1.5px solid var(--success);border-radius:10px;padding:12px 14px;margin-top:4px;}
+.lock-label{color:var(--success);font-weight:700;font-size:0.82rem;margin-bottom:5px;}
+.lock-text{font-size:0.93rem;line-height:1.6;}
+.lock-note{color:var(--muted);font-size:0.72rem;margin-top:7px;}
+.board{background:#07101f;border:2px solid var(--accent2);border-radius:var(--r);padding:16px;margin-bottom:14px;}
+.board-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.board-title{font-size:0.95rem;font-weight:700;color:var(--accent2);}
+.board-grid{
+  columns:240px;
+  column-gap:12px;
+}
+.bc{
+  background:linear-gradient(135deg,#1e1b4b,#1a0a2e);
+  border:1px solid var(--accent);
+  border-radius:10px;
+  padding:14px 14px 12px;
+  position:relative;
+  display:block;
+  break-inside:avoid;
+  margin-bottom:12px;
+  width:100%;
+}
+.bc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:10px 10px 0 0;}
+.bc.mine{border-color:var(--success);}.bc.mine::before{background:linear-gradient(90deg,var(--success),#16a34a);}
+.bc-name{font-size:0.68rem;color:var(--accent2);font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:7px;}
+.bc-text{
+  font-size:0.9rem;
+  line-height:1.75;
+  color:var(--text);
+  white-space:pre-wrap;
+  word-break:break-word;
+  overflow-wrap:anywhere;
+  min-height:0;
+}
+.tabs{display:flex;gap:4px;background:var(--card);border-radius:8px;padding:3px;margin-bottom:12px;}
+.tab{flex:1;padding:7px;border-radius:6px;border:none;font-size:0.78rem;font-weight:600;cursor:pointer;color:var(--muted);background:transparent;font-family:'Prompt',sans-serif;transition:all .15s;}
+.tab.on{background:var(--accent);color:#fff;}
+.roster-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:7px;}
+.ri{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:9px 12px;display:flex;align-items:center;gap:9px;}
+.ri.ok{background:#052e16;border-color:var(--success);}
+.rdot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.rdot.g{background:var(--success);}.rdot.gray{background:var(--muted);}
+.rname{font-size:0.8rem;line-height:1.3;}
+.rid{font-size:0.65rem;color:var(--muted);}
+.roster-sum{display:flex;gap:14px;margin-bottom:10px;font-size:0.82rem;}
+.rs{color:var(--success);font-weight:700;}.rp{color:var(--warn);font-weight:700;}
+.alist{display:flex;flex-direction:column;gap:7px;max-height:360px;overflow-y:auto;}
+.ac{background:var(--card);border-radius:9px;padding:11px 13px;border-left:4px solid var(--accent);display:flex;justify-content:space-between;gap:10px;}
+.ac.mine{border-left-color:var(--success);background:#052e16;}
+.aname{font-size:0.7rem;color:var(--muted);margin-bottom:3px;}
+.atext{font-size:0.88rem;line-height:1.5;}
+.atime{font-size:0.68rem;color:var(--muted);white-space:nowrap;}
+.stu-row{display:flex;align-items:center;gap:8px;background:var(--card);border-radius:8px;padding:8px 12px;margin-bottom:6px;}
+.stu-info{flex:1;}
+.stu-name{font-size:0.85rem;}
+.stu-id{font-size:0.68rem;color:var(--muted);}
+.empty{text-align:center;padding:28px;color:var(--muted);font-size:0.88rem;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:14px;}
+.ctitle{font-size:0.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:10px;font-weight:600;display:flex;justify-content:space-between;align-items:center;}
+/* Config screen */
+#cfg{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:24px;background:var(--bg);}
+.cfg-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;width:100%;max-width:540px;}
+.cfg-title{font-size:1.2rem;font-weight:700;margin-bottom:4px;}
+.cfg-sub{color:var(--muted);font-size:0.85rem;margin-bottom:20px;}
+.step{background:var(--card);border-radius:10px;padding:14px;margin-bottom:10px;}
+.step-num{background:var(--accent);color:#fff;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:700;margin-right:8px;vertical-align:middle;flex-shrink:0;}
+.step-title{font-size:0.9rem;font-weight:600;}
+.step-body{font-size:0.8rem;color:var(--muted);margin-top:8px;line-height:1.7;}
+code{background:#0f172a;padding:2px 7px;border-radius:4px;font-size:0.82em;color:#a5b4fc;font-family:monospace;}
+.url-input{width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:8px;color:var(--text);padding:11px 12px;font-size:0.88rem;outline:none;font-family:monospace;margin-top:10px;}
+.url-input:focus{border-color:var(--accent);}
+.url-input::placeholder{color:var(--muted);}
+/* Login */
+#login{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:24px;text-align:center;}
+.ll{font-size:2.4rem;margin-bottom:10px;}
+.lt{font-size:1.5rem;font-weight:700;margin-bottom:5px;}
+.ls{color:var(--muted);margin-bottom:18px;font-size:0.88rem;}
+.lbox{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px;width:100%;max-width:400px;}
+.lbox label{display:block;text-align:left;color:var(--muted);font-size:0.8rem;margin-bottom:4px;margin-top:10px;}
+select{width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:8px;color:var(--text);padding:10px 12px;font-size:0.93rem;outline:none;font-family:'Prompt',sans-serif;cursor:pointer;}
+select:focus{border-color:var(--accent);}
+#ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:100;align-items:center;justify-content:center;}
+#toast{display:none;position:fixed;bottom:22px;left:50%;transform:translateX(-50%);color:#fff;padding:9px 20px;border-radius:8px;z-index:200;font-size:0.85rem;font-weight:600;white-space:nowrap;}
+.hide{display:none!important;}
+</style>
+</head>
+<body>
+
+<!-- Config screen -->
+<div id="cfg">
+  <div class="cfg-box">
+    <div class="cfg-title">⚙️ ตั้งค่า Google Apps Script</div>
+    <div class="cfg-sub">ทำครั้งเดียว — บันทึกใน localStorage ของ browser</div>
+
+    <div class="step">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span class="step-num">1</span><span class="step-title">สร้าง Google Sheet ใหม่</span>
+      </div>
+      <div class="step-body">
+        ไปที่ <a href="https://sheets.new" target="_blank" style="color:var(--accent)">sheets.new</a>
+        → ตั้งชื่อไฟล์ตามต้องการ (เช่น "Live Quiz Board")
+      </div>
+    </div>
+
+    <div class="step">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span class="step-num">2</span><span class="step-title">เปิด Apps Script</span>
+      </div>
+      <div class="step-body">
+        เมนู Extensions → Apps Script → ลบโค้ดเดิมออกทั้งหมด
+        → วางโค้ดจากไฟล์ <code>Code.gs</code> ที่ได้รับ → กด Save
+      </div>
+    </div>
+
+    <div class="step">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span class="step-num">3</span><span class="step-title">Deploy เป็น Web App</span>
+      </div>
+      <div class="step-body">
+        Deploy → New deployment → Type: <b>Web app</b><br>
+        Execute as: <b>Me</b><br>
+        Who has access: <b>Anyone</b><br>
+        → Deploy → อนุญาต permission → คัดลอก <b>Web app URL</b>
+      </div>
+    </div>
+
+    <div class="step">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span class="step-num">4</span><span class="step-title">วาง URL ด้านล่างนี้</span>
+      </div>
+      <input class="url-input" id="gas-url" placeholder="https://script.google.com/macros/s/AKfy.../exec">
+    </div>
+
+    <div id="cfg-err" style="color:var(--danger);font-size:0.8rem;margin-top:6px;display:none"></div>
+    <div class="btn-row" style="margin-top:14px">
+      <button class="btn bp" style="flex:1" onclick="saveConfig()">บันทึกและเริ่มใช้งาน</button>
+    </div>
+  </div>
+</div>
+
+<!-- Login -->
+<div id="login" class="hide">
+  <div class="ll">💬</div>
+  <div class="lt">กระดานความคิดเห็น</div>
+  <div class="ls">Live Quiz &amp; Opinion Board</div>
+  <div class="lbox">
+    <label>เข้าใช้ในฐานะ</label>
+    <select id="role-sel" onchange="onRole()">
+      <option value="">-- เลือก --</option>
+      <option value="teacher">อาจารย์</option>
+      <option value="student">นักศึกษา</option>
+    </select>
+    <div id="tbox" class="hide">
+      <label>ชื่ออาจารย์</label>
+      <input type="text" id="tname" placeholder="ใส่ชื่อ...">
+    </div>
+    <div id="sbox" class="hide">
+      <label>เลือกชื่อของคุณ</label>
+      <select id="ssel"><option value="">-- เลือกชื่อ --</option></select>
+    </div>
+    <div style="margin-top:14px;display:flex;gap:8px;">
+      <button class="btn bp" style="flex:1" onclick="joinApp()">เข้าสู่ระบบ</button>
+      <button class="btn bg" onclick="resetConfig()" title="เปลี่ยน URL">⚙️</button>
+    </div>
+    <div id="lerr" style="color:var(--danger);font-size:0.8rem;margin-top:7px;display:none">กรุณาเลือกข้อมูลให้ครบ</div>
+  </div>
+</div>
+
+<!-- App -->
+<div id="app" class="hide">
+  <header>
+    <h1>💬 กระดานความคิดเห็น</h1>
+    <div style="display:flex;gap:7px;align-items:center">
+      <span class="dot" id="conn-dot"></span>
+      <span class="hbadge" id="hbadge">—</span>
+      <span class="hbadge" id="hname" style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</span>
+    </div>
+  </header>
+  <div class="wrap">
+    <div class="sbar">
+      <span class="dot" id="sbar-dot"></span>
+      <span id="stext">กำลังเชื่อมต่อ...</span>
+      <span style="margin-left:auto;font-size:0.72rem;color:var(--muted)" id="last-sync"></span>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="stat-n" id="st-sent">0</div><div class="stat-l">ส่งแล้ว</div></div>
+      <div class="stat"><div class="stat-n" id="st-left">0</div><div class="stat-l">ยังไม่ส่ง</div></div>
+      <div class="stat"><div class="stat-n" id="st-total">0</div><div class="stat-l">ทั้งหมด</div></div>
+    </div>
+    <div class="q-box" id="qbox"><span class="q-empty">รอคำถามจากอาจารย์...</span></div>
+
+    <div class="t-panel hide" id="tpanel">
+      <div class="t-label">แผงควบคุมอาจารย์</div>
+      <div class="t-input-row">
+        <input type="text" id="qinput" placeholder="พิมพ์คำถาม / หัวข้อ...">
+        <button class="btn bp" onclick="setQ()">ตั้งคำถาม</button>
+      </div>
+      <div class="btn-row">
+        <button class="btn bt" id="board-btn" onclick="toggleBoard()">เปิดกระดาน</button>
+        <button class="btn bd" onclick="doReset()">รีเซ็ตทั้งหมด</button>
+      </div>
+    </div>
+
+    <div class="a-panel hide" id="apanel">
+      <div class="name-pill" id="npill">—</div>
+      <div id="aform">
+        <textarea id="ainput" placeholder="พิมพ์ความคิดเห็นของคุณ..."></textarea>
+        <div class="btn-row"><button class="btn bs" id="sbtn" onclick="submitAnswer()">ส่งความคิดเห็น</button></div>
+      </div>
+      <div id="alocked" style="display:none">
+        <div class="lock-box">
+          <div class="lock-label">ส่งแล้ว</div>
+          <div class="lock-text" id="locktext">—</div>
+        </div>
+        <div class="lock-note">รอรีเซ็ตรอบถัดไปจากอาจารย์</div>
+      </div>
+    </div>
+
+    <div class="board hide" id="board">
+      <div class="board-hd">
+        <div class="board-title">กระดานความคิดเห็น</div>
+        <span id="bcnt" style="color:var(--muted);font-size:0.8rem">0 ความเห็น</span>
+      </div>
+      <div class="board-grid" id="bgrid"><div class="empty" style="grid-column:1/-1">ยังไม่มีความคิดเห็น</div></div>
+    </div>
+
+    <div id="ttabs" class="hide">
+      <div class="tabs">
+        <button class="tab on" onclick="switchTab('roster')">รายชื่อ</button>
+        <button class="tab" onclick="switchTab('answers')">ความคิดเห็น</button>
+        <button class="tab" onclick="switchTab('manage')">จัดการรายชื่อ</button>
+      </div>
+      <div id="tab-roster">
+        <div class="card">
+          <div class="roster-sum"><span class="rs" id="rs">ส่งแล้ว 0</span><span class="rp" id="rp">ยังไม่ส่ง 0</span></div>
+          <div class="roster-grid" id="rgrid"><div class="empty">ยังไม่มีรายชื่อ</div></div>
+        </div>
+      </div>
+      <div id="tab-answers" class="hide">
+        <div class="card">
+          <div class="ctitle"><span>ความคิดเห็นทั้งหมด</span><span id="acnt" style="color:var(--accent)">0</span></div>
+          <div class="alist" id="alist"><div class="empty">ยังไม่มีความคิดเห็น</div></div>
+        </div>
+      </div>
+      <div id="tab-manage" class="hide">
+        <div class="t-panel" style="margin-bottom:14px">
+          <div class="t-label">เพิ่มนิสิต</div>
+          <div style="display:flex;gap:8px;margin-bottom:8px">
+            <input type="text" id="new-sid" placeholder="รหัสนิสิต" style="flex:1">
+            <input type="text" id="new-sname" placeholder="ชื่อ-นามสกุล" style="flex:2">
+            <button class="btn bp" onclick="addStudent()">เพิ่ม</button>
+          </div>
+          <div style="font-size:0.75rem;color:var(--muted)">หรือวางรายชื่อหลายคน (รหัส[Tab]ชื่อ ต่อบรรทัด)</div>
+          <textarea id="bulk-input" placeholder="66030630	นายปรเมษฐ์ สังคเลิศ" style="margin-top:8px;min-height:80px;font-size:0.82rem;"></textarea>
+          <div class="btn-row" style="margin-top:8px">
+            <button class="btn bs" onclick="bulkAdd()">นำเข้าทั้งหมด</button>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:0">
+          <div class="ctitle">
+            <span>รายชื่อนิสิต (<span id="stu-count">0</span> คน)</span>
+            <button class="btn bd" style="padding:4px 10px;font-size:0.75rem" onclick="clearAllStudents()">ลบทั้งหมด</button>
+          </div>
+          <div id="stu-list"><div class="empty">ยังไม่มีรายชื่อ</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="ov">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;max-width:300px;width:90%;text-align:center;">
+    <div id="omsg" style="font-size:0.95rem;margin-bottom:16px;line-height:1.5;"></div>
+    <div style="display:flex;gap:8px;justify-content:center;">
+      <button id="ocancel" class="btn bg">ยกเลิก</button>
+      <button id="ook" class="btn bd">ยืนยัน</button>
+    </div>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script>
+// ===== State =====
+let GAS_URL = '';
+let me = {name:'',role:'',sid:''};
+let isT = false;
+let myId = 'u_'+Math.random().toString(36).slice(2,10);
+let answers = {}, students = [];
+let qText = '', boardOn = false, locked = false;
+let pollTimer = null;
+
+// ===== Config =====
+function saveConfig() {
+  const url = document.getElementById('gas-url').value.trim();
+  const err = document.getElementById('cfg-err');
+  err.style.display = 'none';
+  if (!url.includes('script.google.com')) {
+    err.textContent = 'URL ไม่ถูกต้อง ต้องเป็น https://script.google.com/macros/s/.../exec';
+    err.style.display = 'block'; return;
+  }
+  localStorage.setItem('gas_url', url);
+  GAS_URL = url;
+  document.getElementById('cfg').classList.add('hide');
+  document.getElementById('login').classList.remove('hide');
+  loadStudentsForLogin();
+}
+
+function resetConfig() {
+  localStorage.removeItem('gas_url');
+  if(pollTimer) clearInterval(pollTimer);
+  document.getElementById('cfg').classList.remove('hide');
+  document.getElementById('login').classList.add('hide');
+  document.getElementById('app').classList.add('hide');
+}
+
+// Default URL — ฝังไว้เลยไม่ต้องกรอก
+const DEFAULT_GAS_URL = 'https://script.google.com/macros/s/AKfycbyQy6cSi79V-KVEWB0cea42Ca-7JpiQ2b49k_ixg7XFbQ4ry_j2qrsoHghSBVjF5XyCBw/exec';
+
+// ล้าง URL เก่าออกเสมอ ใช้ DEFAULT_GAS_URL ที่ฝังในโค้ด
+localStorage.setItem('gas_url', DEFAULT_GAS_URL);
+GAS_URL = DEFAULT_GAS_URL;
+document.getElementById('gas-url').value = DEFAULT_GAS_URL;
+document.getElementById('cfg').classList.add('hide');
+document.getElementById('login').classList.remove('hide');
+loadStudentsForLogin();
+
+let cachedInitData = null; // เก็บ data ที่โหลดตอน login ไว้ใช้ตอน poll รอบแรก
+
+async function loadStudentsForLogin() {
+  // แสดง loading ใน dropdown
+  const sel = document.getElementById('ssel');
+  sel.innerHTML = '<option value="">กำลังโหลดรายชื่อ...</option>';
+  sel.disabled = true;
+  try {
+    const data = await gasGet('getAll');
+    cachedInitData = data; // cache ไว้ใช้ตอน poll รอบแรก
+    students = data.students || [];
+    populateStudentSelect();
+    sel.disabled = false;
+  } catch(e) {
+    sel.innerHTML = '<option value="">โหลดไม่ได้ — ลองใหม่</option>';
+    sel.disabled = false;
+    // ลองใหม่อีกครั้งหลัง 3 วิ
+    setTimeout(loadStudentsForLogin, 3000);
+  }
+}
+
+// ===== API helpers =====
+async function gasGet(action) {
+  const r = await fetch(GAS_URL + '?action=' + action + '&t=' + Date.now(), {cache:'no-store'});
+  return r.json();
+}
+
+async function gasPost(body) {
+  const r = await fetch(GAS_URL, {
+    method: 'POST',
+    body: JSON.stringify(body)
+  });
+  return r.json();
+}
+
+// ===== Login =====
+function onRole() {
+  const r = document.getElementById('role-sel').value;
+  document.getElementById('tbox').classList.toggle('hide', r !== 'teacher');
+  document.getElementById('sbox').classList.toggle('hide', r !== 'student');
+}
+
+function joinApp() {
+  const r = document.getElementById('role-sel').value;
+  const err = document.getElementById('lerr');
+  err.style.display = 'none';
+  if (!r) { err.style.display='block'; return; }
+  if (r === 'teacher') {
+    const n = document.getElementById('tname').value.trim();
+    if (!n) { err.style.display='block'; return; }
+    me = {name:n, role:'teacher', sid:''};
+  } else {
+    const sid = document.getElementById('ssel').value;
+    if (!sid) { err.style.display='block'; return; }
+    const s = students.find(x=>x.id===sid) || {name:sid};
+    me = {name:s.name, role:'student', sid};
+  }
+  isT = me.role === 'teacher';
+  document.getElementById('login').classList.add('hide');
+  document.getElementById('app').classList.remove('hide');
+  document.getElementById('hbadge').textContent = isT ? 'อาจารย์' : 'นักศึกษา';
+  document.getElementById('hname').textContent = me.name;
+  if (isT) {
+    document.getElementById('tpanel').classList.remove('hide');
+    document.getElementById('ttabs').classList.remove('hide');
+  } else {
+    document.getElementById('npill').textContent = me.name;
+  }
+  startPolling();
+}
+
+// ===== Polling (ทุก 2 วินาที) =====
+function startPolling() {
+  // ถ้ามี cachedInitData จาก login ให้ใช้เลย ไม่ต้อง fetch ซ้ำ
+  if (cachedInitData) {
+    applyData(cachedInitData);
+    cachedInitData = null;
+  }
+  poll();
+  pollTimer = setInterval(poll, 2000);
+}
+
+function applyData(data) {
+  const st = data.state || {};
+  students = data.students || [];
+  answers  = {};
+  (data.opinions || []).forEach(o => { answers[o.id] = o; });
+  qText   = st.question || '';
+  boardOn = st.board === '1';
+  renderAll();
+  setConn(true);
+  document.getElementById('last-sync').textContent = '🔄 ' + new Date().toLocaleTimeString('th');
+}
+
+async function poll() {
+  try {
+    const data = await gasGet('getAll');
+    const st = data.state || {};
+    students = data.students || [];
+    answers  = {};
+    (data.opinions || []).forEach(o => { answers[o.id] = o; });
+
+    qText   = st.question || '';
+    boardOn = st.board === '1';
+
+    renderAll();
+    setConn(true);
+    document.getElementById('last-sync').textContent = '🔄 ' + new Date().toLocaleTimeString('th');
+  } catch(e) {
+    setConn(false);
+    document.getElementById('stext').textContent = 'ไม่สามารถเชื่อมต่อ...';
+  }
+}
+
+function setConn(ok) {
+  document.getElementById('conn-dot').classList.toggle('red', !ok);
+  document.getElementById('sbar-dot').classList.toggle('red', !ok);
+  document.getElementById('stext').textContent = ok ? 'เชื่อมต่อแล้ว (อัปเดตทุก 2.5 วิ)' : 'กำลังลองใหม่...';
+}
+
+// ===== Render =====
+function populateStudentSelect() {
+  const sel = document.getElementById('ssel');
+  sel.innerHTML = '<option value="">-- เลือกชื่อ --</option>';
+  students.sort((a,b)=>a.id.localeCompare(b.id)).forEach(s => {
+    const o = document.createElement('option');
+    o.value = s.id; o.textContent = s.id+' '+s.name; sel.appendChild(o);
+  });
+}
+
+function renderAll() {
+  renderQ(); renderBoard(); renderAnswers(); renderRoster();
+  if (!isT) checkLock();
+  if (isT) { renderStudentManager(); populateStudentSelect(); }
+  document.getElementById('board').classList.toggle('hide', !boardOn);
+  document.getElementById('board-btn').textContent = boardOn ? 'ปิดกระดาน' : 'เปิดกระดาน';
+}
+
+function renderQ() {
+  const box = document.getElementById('qbox');
+  const ap  = document.getElementById('apanel');
+  if (qText) {
+    box.innerHTML = `<span class="q-text">${esc(qText)}</span>`;
+    if (!isT) ap.classList.remove('hide');
+  } else {
+    box.innerHTML = '<span class="q-empty">รอคำถามจากอาจารย์...</span>';
+    if (!isT) ap.classList.add('hide');
+  }
+}
+
+function renderBoard() {
+  const grid = document.getElementById('bgrid');
+  const vals = Object.values(answers).sort((a,b)=>(a.ts||0)-(b.ts||0));
+  document.getElementById('bcnt').textContent = vals.length+' ความเห็น';
+  if (!vals.length) { grid.innerHTML='<div class="empty" style="grid-column:1/-1">ยังไม่มีความคิดเห็น</div>'; return; }
+  grid.innerHTML = vals.map(a=>`
+    <div class="bc${a.uid===myId?' mine':''}">
+      <div class="bc-name">${esc(a.name||'ไม่ระบุ')}</div>
+      <div class="bc-text">${esc(a.text)}</div>
+    </div>`).join('');
+}
+
+function renderAnswers() {
+  const list = document.getElementById('alist');
+  const vals = Object.values(answers).sort((a,b)=>(b.ts||0)-(a.ts||0));
+  document.getElementById('acnt').textContent = vals.length+' ความเห็น';
+  if (!vals.length) { list.innerHTML='<div class="empty">ยังไม่มีความคิดเห็น</div>'; return; }
+  list.innerHTML = vals.map(a=>`
+    <div class="ac${a.uid===myId?' mine':''}">
+      <div>
+        <div class="aname">${esc(a.name||'ไม่ระบุ')} · ${esc(a.sid||'')}</div>
+        <div class="atext">${esc(a.text)}</div>
+      </div>
+      <div class="atime">${a.ts?ago(a.ts):''}</div>
+    </div>`).join('');
+}
+
+function renderRoster() {
+  const grid = document.getElementById('rgrid');
+  const sids = new Set(Object.values(answers).map(a=>a.sid).filter(Boolean));
+  const sent = sids.size, left = Math.max(0, students.length-sent);
+  document.getElementById('rs').textContent = 'ส่งแล้ว '+sent;
+  document.getElementById('rp').textContent = 'ยังไม่ส่ง '+left;
+  document.getElementById('st-sent').textContent = sent;
+  document.getElementById('st-left').textContent = left;
+  document.getElementById('st-total').textContent = students.length;
+  if (!students.length) { grid.innerHTML='<div class="empty">ยังไม่มีรายชื่อ</div>'; return; }
+  grid.innerHTML = students.map(s=>{
+    const ok = sids.has(s.id);
+    return `<div class="ri${ok?' ok':''}">
+      <div class="rdot ${ok?'g':'gray'}"></div>
+      <div><div class="rname">${esc(s.name)}</div><div class="rid">${s.id}${ok?' · ส่งแล้ว':''}</div></div>
+    </div>`;
+  }).join('');
+}
+
+function renderStudentManager() {
+  const list = document.getElementById('stu-list');
+  document.getElementById('stu-count').textContent = students.length;
+  if (!students.length) { list.innerHTML='<div class="empty">ยังไม่มีรายชื่อ</div>'; return; }
+  list.innerHTML = students.map(s=>`
+    <div class="stu-row">
+      <div class="stu-info">
+        <div class="stu-name">${esc(s.name)}</div>
+        <div class="stu-id">${esc(s.id)}</div>
+      </div>
+      <button class="btn bd" style="padding:5px 10px;font-size:0.75rem" onclick="removeStudent('${esc(s.id)}')">ลบ</button>
+    </div>`).join('');
+}
+
+function checkLock() {
+  const mine = Object.values(answers).find(a=>a.sid===me.sid);
+  if (mine) {
+    locked = true;
+    document.getElementById('aform').style.display = 'none';
+    document.getElementById('alocked').style.display = 'block';
+    document.getElementById('locktext').textContent = mine.text;
+  } else {
+    locked = false;
+    document.getElementById('aform').style.display = 'block';
+    document.getElementById('alocked').style.display = 'none';
+    const btn = document.getElementById('sbtn');
+    btn.disabled = false; btn.textContent = 'ส่งความคิดเห็น';
+  }
+}
+
+function switchTab(t) {
+  ['roster','answers','manage'].forEach(n=>document.getElementById('tab-'+n).classList.toggle('hide',n!==t));
+  document.querySelectorAll('.tab').forEach((b,i)=>b.classList.toggle('on',['roster','answers','manage'][i]===t));
+}
+
+// ===== Actions =====
+async function setQ() {
+  const text = document.getElementById('qinput').value.trim();
+  if (!text) return;
+  try {
+    await gasPost({action:'setQuestion', text});
+    document.getElementById('qinput').value = '';
+    toast('ตั้งคำถามแล้ว');
+    poll();
+  } catch(e) { toast('Error: '+e.message, 1); }
+}
+
+async function toggleBoard() {
+  try {
+    await gasPost({action:'setBoard', visible:!boardOn});
+    poll();
+  } catch(e) { toast('Error: '+e.message, 1); }
+}
+
+function doReset() {
+  confirm2('รีเซ็ตทั้งหมด? (ลบคำถาม + ความคิดเห็นทั้งหมด)', async()=>{
+    try {
+      await gasPost({action:'resetOpinions'});
+      await gasPost({action:'clearQuestion'});
+      await gasPost({action:'setBoard', visible:false});
+      locked = false;
+      toast('รีเซ็ตเรียบร้อย');
+      poll();
+    } catch(e) { toast('Error: '+e.message, 1); }
+  });
+}
+
+async function submitAnswer() {
+  if (!qText || locked) return;
+  const text = document.getElementById('ainput').value.trim();
+  if (!text) { toast('กรุณาพิมพ์ความคิดเห็นก่อน', 1); return; }
+  const btn = document.getElementById('sbtn');
+  btn.disabled = true; btn.textContent = 'กำลังส่ง...';
+  try {
+    await gasPost({action:'addOpinion', sid:me.sid, name:me.name, text});
+    locked = true;
+    document.getElementById('aform').style.display = 'none';
+    document.getElementById('alocked').style.display = 'block';
+    document.getElementById('locktext').textContent = text;
+    toast('ส่งแล้ว');
+    poll();
+  } catch(e) {
+    toast('Error: '+(e.message||e), 1);
+    btn.disabled = false; btn.textContent = 'ส่งความคิดเห็น';
+  }
+}
+
+async function addStudent() {
+  const sid   = document.getElementById('new-sid').value.trim();
+  const sname = document.getElementById('new-sname').value.trim();
+  if (!sid||!sname) { toast('กรุณาใส่รหัสและชื่อ',1); return; }
+  try {
+    await gasPost({action:'addStudent', id:sid, name:sname});
+    document.getElementById('new-sid').value = '';
+    document.getElementById('new-sname').value = '';
+    toast('เพิ่มนิสิตแล้ว'); poll();
+  } catch(e) { toast('Error: '+e.message,1); }
+}
+
+async function bulkAdd() {
+  const raw = document.getElementById('bulk-input').value.trim();
+  if (!raw) { toast('กรุณาวางรายชื่อก่อน',1); return; }
+  const lines = raw.split('\n').map(l=>l.trim()).filter(Boolean);
+  let count = 0;
+  for (const line of lines) {
+    const parts = line.split(/\t|  +/);
+    if (parts.length>=2) {
+      const sid=parts[0].trim(), sname=parts.slice(1).join(' ').trim();
+      if (sid&&sname) { await gasPost({action:'addStudent',id:sid,name:sname}); count++; }
+    }
+  }
+  document.getElementById('bulk-input').value = '';
+  toast('นำเข้า '+count+' คนแล้ว'); poll();
+}
+
+async function removeStudent(sid) {
+  try { await gasPost({action:'removeStudent', id:sid}); toast('ลบออกแล้ว'); poll(); }
+  catch(e) { toast('Error: '+e.message,1); }
+}
+
+function clearAllStudents() {
+  confirm2('ลบรายชื่อนิสิตทั้งหมด?', async()=>{
+    try { await gasPost({action:'clearStudents'}); toast('ลบทั้งหมดแล้ว'); poll(); }
+    catch(e) { toast('Error: '+e.message,1); }
+  });
+}
+
+// ===== Utilities =====
+function confirm2(msg, ok) {
+  const ov = document.getElementById('ov');
+  document.getElementById('omsg').textContent = msg;
+  ov.style.display = 'flex';
+  document.getElementById('ook').onclick    = ()=>{ ov.style.display='none'; ok(); };
+  document.getElementById('ocancel').onclick = ()=>{ ov.style.display='none'; };
+}
+function toast(msg, err=0) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.style.background = err?'var(--danger)':'var(--success)';
+  el.style.display = 'block'; setTimeout(()=>el.style.display='none', 2500);
+}
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function ago(ts){ const d=Math.floor((Date.now()-ts)/1000); return d<60?d+'วิ':d<3600?Math.floor(d/60)+'นาที':Math.floor(d/3600)+'ชม.'; }
+document.addEventListener('keydown', e=>{ if(e.target.id==='qinput'&&e.key==='Enter') setQ(); });
+</script>
+</body>
+</html>
